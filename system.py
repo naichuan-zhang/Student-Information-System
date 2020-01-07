@@ -7,11 +7,11 @@ from os import path
 
 filename = "students.txt"
 
+
 def main():
+    menu()
     running = True
     while running:
-        # show system menu
-        menu()
         string = input("Please pick a number: ")
         option_str = re.sub("[^0-9]", "", string)      # replace all the non-digits to empty, only remains number
         if option_str in ['0', '1', '2', '3', '4', '5', '6', '7']:
@@ -105,7 +105,9 @@ def insert():
 
 
 def search():
-    pass
+    searching = True
+    while searching:
+        pass
 
 
 def delete():
@@ -142,8 +144,45 @@ def delete():
                 deleting = False
 
 
+def print_all_students():
+    with open(filename, "r") as rfile:
+        students = rfile.readlines()
+        for student in students:
+            student_dict = dict(eval(student))
+            print("ID\t\tName\t\tEnglish\t\tPython")
+            print("%s\t\t%s\t\t%s\t\t%s\t\t" % (student_dict['id'], student_dict['name'],
+                                          student_dict['english'], student_dict['python']))
+
+
 def modify():
-    pass
+    print_all_students()
+
+    if path.exists(filename):
+        with open(filename, 'r') as rfile:
+            student_old = rfile.readlines()         # a list of students
+    else:
+        return
+
+    student_id = input("Please enter student ID you want to modify: ")
+    with open(filename, 'w') as wfile:
+        for student in student_old:
+            d = dict(eval(student))
+            if d['id'] == student_id:
+                print("This student Record is Editable!")
+                while True:
+                    try:
+                        d['name'] = input("Please enter student name: ")
+                        d['english'] = int(input("Please enter English test score: "))
+                        d['python'] = int(input("Please enter Python test score: "))
+                    except:
+                        print("An error occurred. Please re-try! @6@")
+                    else:
+                        break
+                student_str = str(d)
+                wfile.write(student_str)
+                print("The student record has been modified!")
+            else:
+                wfile.write(student)
 
 
 def sort():
@@ -151,7 +190,13 @@ def sort():
 
 
 def total():
-    pass
+    if path.exists(filename):
+        with open(filename, 'r') as rfile:
+            student_old = rfile.readlines()
+            if not student_old:
+                print("An error occurred!")
+            else:
+                print("Total number of students are %s" % len(student_old))
 
 
 def show():
